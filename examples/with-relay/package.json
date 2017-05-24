@@ -1,0 +1,27 @@
+{
+  "name": "with-relay",
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "next",
+    "build": "npm run relay && next build",
+    "relay": "relay-compiler --src components --schema ./schema.graphql",
+    "start": "next start"
+  },
+  "dependencies": {
+    "graphql": "^0.9.6",
+    "isomorphic-fetch": "^2.2.1",
+    "next": "latest",
+    "prop-types": "^15.5.8",
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4",
+    "react-relay": "^1.0.0",
+    "relay-runtime": "^1.0.0"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-plugin-relay": "^1.0.1",
+    "get-graphql-schema": "^2.0.0",
+    "relay-compiler": "^1.0.0"
+  }
+}
