@@ -3,7 +3,7 @@
  *   relay-compiler
  *
  * @providesModule Submit.graphql
- * @generated SignedSource<<bc95669bb53ad41e50862239ddb2a09c>>
+ * @generated SignedSource<<9ff2cfc6742efbddd59c3b7ce0fd9def>>
  * @flow
  * @nogrep
  */
@@ -15,7 +15,9 @@
 /*::
 import type {ConcreteFragment} from 'relay-runtime';
 export type Submit = {|
-  +id: string;
+  +user: ?{|
+    +id: string;
+  |};
 |};
 */
 
@@ -27,10 +29,21 @@ const fragment /*: ConcreteFragment*/ = {
   "name": "Submit",
   "selections": [
     {
-      "kind": "ScalarField",
+      "kind": "LinkedField",
       "alias": null,
       "args": null,
-      "name": "id",
+      "concreteType": "User",
+      "name": "user",
+      "plural": false,
+      "selections": [
+        {
+          "kind": "ScalarField",
+          "alias": null,
+          "args": null,
+          "name": "id",
+          "storageKey": null
+        }
+      ],
       "storageKey": null
     }
   ],

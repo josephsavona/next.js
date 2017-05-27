@@ -3,7 +3,7 @@
  *   relay-compiler
  *
  * @providesModule PostList.graphql
- * @generated SignedSource<<c9ad784875bed6a91b090ddb866ac5e1>>
+ * @generated SignedSource<<f7ef01952d36fb557f1d463c71046217>>
  * @flow
  * @nogrep
  */
@@ -63,7 +63,14 @@ const fragment /*: ConcreteFragment*/ = {
     {
       "kind": "LinkedField",
       "alias": "allPosts",
-      "args": null,
+      "args": [
+        {
+          "kind": "Literal",
+          "name": "orderBy",
+          "value": "createdAt_DESC",
+          "type": "PostOrderBy"
+        }
+      ],
       "concreteType": "PostConnection",
       "name": "__PostList_allPosts_connection",
       "plural": false,
@@ -131,7 +138,7 @@ const fragment /*: ConcreteFragment*/ = {
           "storageKey": null
         }
       ],
-      "storageKey": null
+      "storageKey": "__PostList_allPosts_connection{\"orderBy\":\"createdAt_DESC\"}"
     }
   ],
   "type": "Viewer"

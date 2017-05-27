@@ -1,16 +1,18 @@
-import environment from '../lib/environment';
 import React from 'react'
-import { commitMutation, createFragmentContainer, graphql, QueryRenderer } from 'react-relay'
+import { ConnectionHandler } from 'relay-runtime';
+import { commitMutation, createFragmentContainer, graphql} from 'react-relay'
 
 const SubmitCreatePostMutation = graphql`
   mutation SubmitCreatePostMutation($input: CreatePostInput!) {
     createPost(input: $input) {
-      post {
-        id
-        title
-        votes
-        url
-        createdAt
+      edge {
+        node {
+          id
+          title
+          votes
+          url
+          createdAt
+        }
       }
     }
   }
@@ -37,7 +39,32 @@ class Submit extends React.Component {
           votes: 0,
         },
       },
+      optimisticResponse: () => ({
+        createPost: {
+          edge: {
+            node: {
+              createdAt: null,
+              id: null,
+              title,
+              url,
+              votes: 0,
+            },
+          },
+        },
+      }),
       updater: store => {
+        const createPost = store.getRootField('createPost');
+        const edge = createPost && createPost.getLinkedRecord('edge');
+        const post = edge && edge.getLinkedRecord('node');
+        const viewer = store.getRoot().getLinkedRecord('__viewer_viewer');
+        const posts = viewer && ConnectionHandler.getConnection(
+          viewer,
+          'PostList_allPosts',
+          {orderBy: 'createdAt_DESC'},
+        );
+        if (posts && post) {
+          ConnectionHandler.insertEdgeBefore(posts, post);
+        }
       },
     });
   }
@@ -98,35 +125,11 @@ class Submit extends React.Component {
   }
 }
 
-Submit = createFragmentContainer(Submit, graphql`
+export default createFragmentContainer(Submit, graphql`
   fragment Submit on Viewer {
     # dummy field
-    id
-  }
-`);
-
-const SubmitQuery = graphql`
-  query SubmitQuery {
-    viewer {
-      ...Submit
+    user {
+      id
     }
   }
-`;
-
-export default () => (
-  <QueryRenderer
-    environment={environment}
-    query={SubmitQuery}
-    variables={{}}
-    render={({error, props}) => {
-      if (error) {
-        return <div>{error.message}</div>;
-      } else if (props) {
-        return <Submit data={props.viewer} />;
-      } else {
-        return <div>'Loading'</div>;
-      }
-    }}
-    />
-);
-
+`);

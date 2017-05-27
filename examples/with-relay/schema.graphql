@@ -582,6 +582,7 @@ type Viewer {
   File(id: ID, secret: String, url: String): File
   Post(id: ID): Post
   User(id: ID): User
-  id: ID!
+  # hide the field so that the compiler doesn't add it to queries
+  # id: ID!
 }
 

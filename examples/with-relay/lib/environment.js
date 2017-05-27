@@ -14,7 +14,7 @@ function fetchQuery(
   cacheConfig,
   uploadables,
 ) {
-  console.log(operation.text, variables);
+  console.log('fetch on ' + (process.browser ? 'browser' : 'server'));
   return fetch(GRAPHQL_ENDPOINT, {
     method: 'POST',
     headers: {
@@ -27,12 +27,6 @@ function fetchQuery(
     }),
   }).then(response => {
     return response.json();
-  }).then(json => {
-    console.log(json);
-    return json;
-  }).catch(error => {
-    console.error(error.message || error);
-    throw error;
   });
 }
 
@@ -44,4 +38,7 @@ const environment = new Environment({
   store,
 });
 
-export default environment;
+export default {
+  network,
+  store,
+};

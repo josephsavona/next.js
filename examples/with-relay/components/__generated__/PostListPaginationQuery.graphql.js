@@ -3,8 +3,8 @@
  *   relay-compiler
  *
  * @providesModule PostListPaginationQuery.graphql
- * @generated SignedSource<<e85f26370c2718ffbb01f34baa286017>>
- * @relayHash 9db20716c33e0bf3317b1f9091b065cb
+ * @generated SignedSource<<fd32fd780cfb20863e84105d74368a27>>
+ * @relayHash 9a67195a797d916341e1a14bc3f02b89
  * @flow
  * @nogrep
  */
@@ -26,12 +26,11 @@ query PostListPaginationQuery(
 ) {
   viewer {
     ...PostList_1G22uz
-    id
   }
 }
 
 fragment PostList_1G22uz on Viewer {
-  allPosts(after: $cursor, first: $count) {
+  allPosts(orderBy: createdAt_DESC, after: $cursor, first: $count) {
     count
     edges {
       node {
@@ -150,13 +149,6 @@ const batch /*: ConcreteBatch*/ = {
         "plural": false,
         "selections": [
           {
-            "kind": "ScalarField",
-            "alias": null,
-            "args": null,
-            "name": "id",
-            "storageKey": null
-          },
-          {
             "kind": "InlineFragment",
             "type": "Viewer",
             "selections": [
@@ -175,6 +167,12 @@ const batch /*: ConcreteBatch*/ = {
                     "name": "first",
                     "variableName": "count",
                     "type": "Int"
+                  },
+                  {
+                    "kind": "Literal",
+                    "name": "orderBy",
+                    "value": "createdAt_DESC",
+                    "type": "PostOrderBy"
                   }
                 ],
                 "concreteType": "PostConnection",
@@ -350,12 +348,20 @@ const batch /*: ConcreteBatch*/ = {
                     "name": "first",
                     "variableName": "count",
                     "type": "Int"
+                  },
+                  {
+                    "kind": "Literal",
+                    "name": "orderBy",
+                    "value": "createdAt_DESC",
+                    "type": "PostOrderBy"
                   }
                 ],
                 "handle": "connection",
                 "name": "allPosts",
                 "key": "PostList_allPosts",
-                "filters": null
+                "filters": [
+                  "orderBy"
+                ]
               }
             ]
           }
@@ -373,7 +379,7 @@ const batch /*: ConcreteBatch*/ = {
       }
     ]
   },
-  "text": "query PostListPaginationQuery(\n  $count: Int\n  $cursor: String\n) {\n  viewer {\n    ...PostList_1G22uz\n    id\n  }\n}\n\nfragment PostList_1G22uz on Viewer {\n  allPosts(after: $cursor, first: $count) {\n    count\n    edges {\n      node {\n        id\n        title\n        url\n        createdAt\n        ...PostUpvoter\n      }\n    }\n    ... on PostConnection {\n      edges {\n        cursor\n        node {\n          __typename\n          id\n        }\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n        hasPreviousPage\n        startCursor\n      }\n    }\n  }\n}\n\nfragment PostUpvoter on Post {\n  id\n  votes\n}\n"
+  "text": "query PostListPaginationQuery(\n  $count: Int\n  $cursor: String\n) {\n  viewer {\n    ...PostList_1G22uz\n  }\n}\n\nfragment PostList_1G22uz on Viewer {\n  allPosts(orderBy: createdAt_DESC, after: $cursor, first: $count) {\n    count\n    edges {\n      node {\n        id\n        title\n        url\n        createdAt\n        ...PostUpvoter\n      }\n    }\n    ... on PostConnection {\n      edges {\n        cursor\n        node {\n          __typename\n          id\n        }\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n        hasPreviousPage\n        startCursor\n      }\n    }\n  }\n}\n\nfragment PostUpvoter on Post {\n  id\n  votes\n}\n"
 };
 
 module.exports = batch;

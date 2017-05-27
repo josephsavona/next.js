@@ -1,5 +1,4 @@
-import environment from '../lib/environment';
-import {createPaginationContainer, graphql, QueryRenderer} from 'react-relay'
+import {createPaginationContainer, graphql} from 'react-relay'
 import PostUpvoter from './PostUpvoter'
 
 const POSTS_PER_PAGE = 10
@@ -75,14 +74,15 @@ class PostList extends React.Component {
   }
 }
 
-PostList = createPaginationContainer(
+export default createPaginationContainer(
   PostList,
   graphql.experimental`
     fragment PostList on Viewer @argumentDefinitions(
       count: {type: "Int", defaultValue: 10}
       cursor: {type: "String"}
     ) {
-      allPosts(after: $cursor, first: $count) @connection(key: "PostList_allPosts") {
+      allPosts(orderBy: createdAt_DESC, after: $cursor, first: $count)
+      @connection(key: "PostList_allPosts") {
         count
         edges {
           node {
@@ -110,29 +110,3 @@ PostList = createPaginationContainer(
     `,
   }
 );
-
-const PostListQuery = graphql.experimental`
-  query PostListQuery {
-    viewer {
-      ...PostList
-    }
-  }
-`;
-
-export default () => (
-  <QueryRenderer
-    environment={environment}
-    query={PostListQuery}
-    variables={{}}
-    render={({error, props}) => {
-      if (error) {
-        return <div>{error.message}</div>;
-      } else if (props) {
-        return <PostList data={props.viewer} />;
-      } else {
-        return <div>'Loading'</div>;
-      }
-    }}
-    />
-);
-

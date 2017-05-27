@@ -3,8 +3,8 @@
  *   relay-compiler
  *
  * @providesModule SubmitCreatePostMutation.graphql
- * @generated SignedSource<<68808cbd3edbb13edff3159b1fa70bc2>>
- * @relayHash f60ec95e09a61324eb59c203d411ca0b
+ * @generated SignedSource<<145ee4b8f785432a9ccbf6d62bab8ba7>>
+ * @relayHash 9374bb62b03457fcf419cd6ea81b717b
  * @flow
  * @nogrep
  */
@@ -22,15 +22,19 @@ export type CreatePostInput = {
 };
 
 export type SubmitCreatePostMutationResponse = {
-  post?: ?SubmitCreatePostMutationResponse_post;
+  edge?: ?SubmitCreatePostMutationResponse_edge;
 };
 
-export type SubmitCreatePostMutationResponse_post = {
+export type SubmitCreatePostMutationResponse_edge_node = {
   id: string;
   title: string;
   votes: number;
   url: string;
   createdAt: any;
+};
+
+export type SubmitCreatePostMutationResponse_edge = {
+  node: SubmitCreatePostMutationResponse_edge_node;
 };
 */
 
@@ -40,12 +44,14 @@ mutation SubmitCreatePostMutation(
   $input: CreatePostInput!
 ) {
   createPost(input: $input) {
-    post {
-      id
-      title
-      votes
-      url
-      createdAt
+    edge {
+      node {
+        id
+        title
+        votes
+        url
+        createdAt
+      }
     }
   }
 }
@@ -84,43 +90,54 @@ const batch /*: ConcreteBatch*/ = {
             "kind": "LinkedField",
             "alias": null,
             "args": null,
-            "concreteType": "Post",
-            "name": "post",
+            "concreteType": "PostEdge",
+            "name": "edge",
             "plural": false,
             "selections": [
               {
-                "kind": "ScalarField",
+                "kind": "LinkedField",
                 "alias": null,
                 "args": null,
-                "name": "id",
-                "storageKey": null
-              },
-              {
-                "kind": "ScalarField",
-                "alias": null,
-                "args": null,
-                "name": "title",
-                "storageKey": null
-              },
-              {
-                "kind": "ScalarField",
-                "alias": null,
-                "args": null,
-                "name": "votes",
-                "storageKey": null
-              },
-              {
-                "kind": "ScalarField",
-                "alias": null,
-                "args": null,
-                "name": "url",
-                "storageKey": null
-              },
-              {
-                "kind": "ScalarField",
-                "alias": null,
-                "args": null,
-                "name": "createdAt",
+                "concreteType": "Post",
+                "name": "node",
+                "plural": false,
+                "selections": [
+                  {
+                    "kind": "ScalarField",
+                    "alias": null,
+                    "args": null,
+                    "name": "id",
+                    "storageKey": null
+                  },
+                  {
+                    "kind": "ScalarField",
+                    "alias": null,
+                    "args": null,
+                    "name": "title",
+                    "storageKey": null
+                  },
+                  {
+                    "kind": "ScalarField",
+                    "alias": null,
+                    "args": null,
+                    "name": "votes",
+                    "storageKey": null
+                  },
+                  {
+                    "kind": "ScalarField",
+                    "alias": null,
+                    "args": null,
+                    "name": "url",
+                    "storageKey": null
+                  },
+                  {
+                    "kind": "ScalarField",
+                    "alias": null,
+                    "args": null,
+                    "name": "createdAt",
+                    "storageKey": null
+                  }
+                ],
                 "storageKey": null
               }
             ],
@@ -168,43 +185,54 @@ const batch /*: ConcreteBatch*/ = {
             "kind": "LinkedField",
             "alias": null,
             "args": null,
-            "concreteType": "Post",
-            "name": "post",
+            "concreteType": "PostEdge",
+            "name": "edge",
             "plural": false,
             "selections": [
               {
-                "kind": "ScalarField",
+                "kind": "LinkedField",
                 "alias": null,
                 "args": null,
-                "name": "id",
-                "storageKey": null
-              },
-              {
-                "kind": "ScalarField",
-                "alias": null,
-                "args": null,
-                "name": "title",
-                "storageKey": null
-              },
-              {
-                "kind": "ScalarField",
-                "alias": null,
-                "args": null,
-                "name": "votes",
-                "storageKey": null
-              },
-              {
-                "kind": "ScalarField",
-                "alias": null,
-                "args": null,
-                "name": "url",
-                "storageKey": null
-              },
-              {
-                "kind": "ScalarField",
-                "alias": null,
-                "args": null,
-                "name": "createdAt",
+                "concreteType": "Post",
+                "name": "node",
+                "plural": false,
+                "selections": [
+                  {
+                    "kind": "ScalarField",
+                    "alias": null,
+                    "args": null,
+                    "name": "id",
+                    "storageKey": null
+                  },
+                  {
+                    "kind": "ScalarField",
+                    "alias": null,
+                    "args": null,
+                    "name": "title",
+                    "storageKey": null
+                  },
+                  {
+                    "kind": "ScalarField",
+                    "alias": null,
+                    "args": null,
+                    "name": "votes",
+                    "storageKey": null
+                  },
+                  {
+                    "kind": "ScalarField",
+                    "alias": null,
+                    "args": null,
+                    "name": "url",
+                    "storageKey": null
+                  },
+                  {
+                    "kind": "ScalarField",
+                    "alias": null,
+                    "args": null,
+                    "name": "createdAt",
+                    "storageKey": null
+                  }
+                ],
                 "storageKey": null
               }
             ],
@@ -215,7 +243,7 @@ const batch /*: ConcreteBatch*/ = {
       }
     ]
   },
-  "text": "mutation SubmitCreatePostMutation(\n  $input: CreatePostInput!\n) {\n  createPost(input: $input) {\n    post {\n      id\n      title\n      votes\n      url\n      createdAt\n    }\n  }\n}\n"
+  "text": "mutation SubmitCreatePostMutation(\n  $input: CreatePostInput!\n) {\n  createPost(input: $input) {\n    edge {\n      node {\n        id\n        title\n        votes\n        url\n        createdAt\n      }\n    }\n  }\n}\n"
 };
 
 module.exports = batch;

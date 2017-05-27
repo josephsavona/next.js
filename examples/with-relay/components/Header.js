@@ -10,6 +10,10 @@ export default ({ pathname }) => (
       <a className={pathname === '/about' && 'is-active'}>About</a>
     </Link>
 
+    <Link href='/test'>
+      <a className={pathname === '/test' && 'is-active'}>Test</a>
+    </Link>
+
     <style jsx>{`
       header {
         margin-bottom: 25px;
