@@ -1,35 +1,33 @@
 import React from 'react';
 import App from '../components/App';
-import environment from '../lib/environment';
+import createEnvironment from '../lib/createEnvironment';
 import createPage from '../lib/createPage';
 import {graphql} from 'react-relay';
 
-class Test extends React.Component {
-  render() {
-    return (
-      <App>
-        <article>
-          <h1>Test</h1>
-          <p>
-            {JSON.stringify(this.props.data, null, 2)}
-          </p>
-        </article>
-      </App>
-    );
-  }
-}
+const view = props => (
+  <App>
+    <article>
+      <h1>Test</h1>
+      <p>
+        {JSON.stringify(props.data, null, 2)}
+      </p>
+    </article>
+  </App>
+);
 
-export default createPage(
-  environment,
-  Test,
-  graphql`
-    query testQuery {
-      viewer {
-        allPosts(first: 10) {
-          count
-        }
+const testQuery = graphql`
+  query testQuery {
+    viewer {
+      allPosts(first: 10) {
+        count
       }
     }
-  `,
+  }
+`;
+
+export default createPage(
+  createEnvironment,
+  view,
+  testQuery,
 );
 

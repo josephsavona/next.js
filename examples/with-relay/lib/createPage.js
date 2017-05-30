@@ -3,28 +3,18 @@ import RelayPropTypes from 'react-relay/lib/RelayPropTypes';
 
 let browserEnvironment = null;
 
-function createEnvironment(config, data) {
-  const source = new RecordSource(data);
-  const store = new Store(source);
-  const environment = new Environment({
-    ...config,
-    store,
-  });
-  return environment;
-}
-
-function getOrCreateEnvironment(config, data) {
+function getOrCreateEnvironment(createEnvironment, data) {
   if (process.browser) {
-    if (!browserEnvironment) {
-      browserEnvironment = createEnvironment(config, data);
+    if (browserEnvironment === null) {
+      browserEnvironment = createEnvironment(data);
     }
     return browserEnvironment;
   } else {
-    return createEnvironment(config, data);
+    return createEnvironment(data);
   }
 }
 
-export default function createPage(environmentConfig, Component, query, getVariables) {
+export default function createPage(createEnvironment, Component, query, getVariables) {
   class PageContainer extends React.Component {
     static async getInitialProps(ctx) {
       return new Promise((resolve, reject) => {
@@ -32,7 +22,7 @@ export default function createPage(environmentConfig, Component, query, getVaria
           ? getVariables(ctx.query)
           : ctx.query;
         const operation = createOperationSelector(getOperation(query), variables);
-        const environment = getOrCreateEnvironment(environmentConfig);
+        const environment = getOrCreateEnvironment(createEnvironment);
 
         environment.toJSON = () => null; // don't try to serialize it from server to client
         const onCompleted = () => {
@@ -67,7 +57,7 @@ export default function createPage(environmentConfig, Component, query, getVaria
     }
 
     _setup({data, environment, variables}) {
-      environment = environment || getOrCreateEnvironment(environmentConfig, data);
+      environment = environment || getOrCreateEnvironment(createEnvironment, data);
       this.relay = {
         environment,
         variables,
