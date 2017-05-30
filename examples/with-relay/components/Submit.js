@@ -1,5 +1,5 @@
 import React from 'react'
-import { ConnectionHandler } from 'relay-runtime';
+import { ConnectionHandler, ViewerHandler } from 'relay-runtime';
 import { commitMutation, createFragmentContainer, graphql} from 'react-relay'
 
 const SubmitCreatePostMutation = graphql`
@@ -29,6 +29,20 @@ class Submit extends React.Component {
   }
 
   createPost(title, url) {
+    const updater = store => {
+      const createPost = store.getRootField('createPost');
+      const edge = createPost && createPost.getLinkedRecord('edge');
+      const post = edge && edge.getLinkedRecord('node');
+      const viewer = store.get(ViewerHandler.VIEWER_ID);
+      const posts = viewer && ConnectionHandler.getConnection(
+        viewer,
+        'PostList_allPosts',
+        {orderBy: 'createdAt_DESC'},
+      );
+      if (posts && post) {
+        ConnectionHandler.insertEdgeBefore(posts, edge);
+      }
+    };
     commitMutation(this.props.relay.environment, {
       mutation: SubmitCreatePostMutation,
       variables: {
@@ -52,20 +66,8 @@ class Submit extends React.Component {
           },
         },
       }),
-      updater: store => {
-        const createPost = store.getRootField('createPost');
-        const edge = createPost && createPost.getLinkedRecord('edge');
-        const post = edge && edge.getLinkedRecord('node');
-        const viewer = store.getRoot().getLinkedRecord('__viewer_viewer');
-        const posts = viewer && ConnectionHandler.getConnection(
-          viewer,
-          'PostList_allPosts',
-          {orderBy: 'createdAt_DESC'},
-        );
-        if (posts && post) {
-          ConnectionHandler.insertEdgeBefore(posts, post);
-        }
-      },
+      optimisticUpdater: updater,
+      updater,
     });
   }
 
