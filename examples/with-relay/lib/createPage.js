@@ -18,26 +18,32 @@ export default function createPage(createEnvironment, Component, query, getVaria
   class PageContainer extends React.Component {
     static async getInitialProps(ctx) {
       return new Promise((resolve, reject) => {
-        const variables = getVariables != null
+        const inputVariables = getVariables != null
           ? getVariables(ctx.query)
           : ctx.query;
-        const operation = createOperationSelector(getOperation(query), variables);
+        const operation = createOperationSelector(getOperation(query), inputVariables);
+        const variables = operation.variables;
         const environment = getOrCreateEnvironment(createEnvironment);
 
-        environment.toJSON = () => null; // don't try to serialize it from server to client
+        // If getInitialProps() and render() run in the same process (both
+        // server or both client), then use the same `environment` to avoid
+        // rehydrating from the record source. When transferring initial data
+        // from server -> client, skip the environment.
+        environment.toJSON = () => null;
+
         const onCompleted = () => {
-          new Promise(resolveCompleted => {
-            const data = process.browser
-              ? null
-              : environment.getStore().getSource().toJSON();
-            resolveCompleted({relay: {data, environment, variables}});
-          }).then(resolve, reject);
+          resolve({
+            relay: {
+              data : process.browser ? null : environment.getStore().getSource().toJSON(),
+              environment,
+              variables,
+            },
+          });
         };
         environment.sendQuery({
           onCompleted,
           onError: reject,
           operation,
-          variables: operation.variables,
         });
       });
     }
@@ -57,15 +63,17 @@ export default function createPage(createEnvironment, Component, query, getVaria
     }
 
     _setup({data, environment, variables}) {
+      // When reviving server getInitialProps() on the client the environment
+      // will be null, per the note above.
       environment = environment || getOrCreateEnvironment(createEnvironment, data);
-      this.relay = {
-        environment,
-        variables,
-      };
       const operation = createOperationSelector(getOperation(query), variables);
       const snapshot = environment.lookup(operation.fragment);
-      this.retain = environment.retain(operation.query);
-      this.subscription = environment.subscribe(snapshot, nextSnapshot => {
+      this._relay = {
+        environment,
+        variables: operation.variables,
+      };
+      this._retain = environment.retain(operation.query);
+      this._subscription = environment.subscribe(snapshot, nextSnapshot => {
         this.setState({
           data: nextSnapshot.data,
         });
@@ -76,19 +84,19 @@ export default function createPage(createEnvironment, Component, query, getVaria
     }
 
     _teardown() {
-      if (this.retain) {
-        this.retain.dispose();
-        this.retain = null;
+      if (this._retain) {
+        this._retain.dispose();
+        this._retain = null;
       }
-      if (this.subscription) {
-        this.subscription.dispose();
-        this.subscription = null;
+      if (this._subscription) {
+        this._subscription.dispose();
+        this._subscription = null;
       }
     }
 
     getChildContext() {
       return {
-        relay: this.relay,
+        relay: this._relay,
       };
     }
 
